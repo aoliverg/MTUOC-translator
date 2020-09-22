@@ -1,0 +1,23 @@
+Server:
+  ip: 192.168.1.36
+  port: 8000
+  type: MTUOC
+  #One of MTUOC, Moses, OpenNMT, NMTWizard, ModernMT
+  
+Filepath:
+  path_in: /home/aoliverg/recerca/Sergi-Alvarez/traduccionoticies3
+  path_out: /home/aoliverg/recerca/Sergi-Alvarez/traduccionoticies3
+
+
+Segmentation:
+  segment: False
+  #True or False
+  SRX_file: segment.srx
+  
+LanguageCodes:
+  source: en
+  target: es
+  
+Textfile:
+  encoding: utf-8
+  

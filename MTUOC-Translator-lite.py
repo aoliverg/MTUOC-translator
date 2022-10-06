@@ -46,6 +46,14 @@ def connect():
             errormessage="Error connecting to MTUOC: \n"+ str(sys.exc_info()[1])
             print_info("Error", errormessage)
             
+    elif server_type=="MTUOC2":
+        try:
+            global urlMTUOC2
+            urlMTUOC2 = "http://"+args.ip+":"+str(args.port)+"/translate"
+        except:
+            errormessage="Error connecting to MTUOC2: \n"+ str(sys.exc_info()[1])
+            print_info("Error", errormessage) 
+            
     elif server_type=="Moses":
         try:
             global proxyMoses
@@ -87,6 +95,26 @@ def translate_segment_MTUOC(segment):
     return(translation)
 
     
+def translate_segment_MTUOC2(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
+    import random
+    global urlMTUOC2
+    translation=""
+    try:
+        headers = {'content-type': 'application/json'}
+        #params = [{ "id" : id},{ "src" : segment},{ "srcLang" : srcLang},{"tgtLang" : tgtLang}]
+        params={}
+        params["id"]=random.randint(0, 10000)
+        params["src"]=segment
+        params["srcLang"]=srcLang
+        params["tgtLang"]=tgtLang
+        response = requests.post(urlMTUOC2, json=params, headers=headers)
+        target = response.json()
+        translation=target[0][0]["tgt"]
+    except:
+        errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])
+        print_info("Error", errormessage)
+    return(translation)
+
 def translate_segment_OpenNMT(segment):
     global urlOpenNMT
     translation=""
@@ -98,7 +126,7 @@ def translate_segment_OpenNMT(segment):
         translation=target[0][0]["tgt"]
     except:
         errormessage="Error retrieving translation from OpenNMT: \n"+ str(sys.exc_info()[1])
-        print_info("Error", errormessage)
+        messagebox.showinfo("Error", errormessage)
     return(translation)
 
     
@@ -141,6 +169,8 @@ def translate_segment(segment):
     MTEngine=args.type
     if MTEngine=="MTUOC":
         translation=translate_segment_MTUOC(segment)
+    elif MTEngine=="MTUOC2":
+        translation=translate_segment_MTUOC2(segment)
     elif MTEngine=="OpenNMT":
         translation=translate_segment_OpenNMT(segment)
     elif MTEngine=="NMTWizard":

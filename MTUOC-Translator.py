@@ -68,17 +68,26 @@ def connect():
     server_type=connecto_ListBox_TypeList.get(ACTIVE)
     if server_type=="MTUOC":
         try:
-            service="ws://"+connecto_E_Server.get()+":"+str(connecto_E_Port.get())+"/translate"
+            service="ws://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/translate"
             global ws
             ws = create_connection(service)
         except:
             errormessage="Error connecting to MTUOC: \n"+ str(sys.exc_info()[1])
             messagebox.showinfo("Error", errormessage)
             
+    elif server_type=="MTUOC2":
+        try:
+            global urlMTUOC2
+            urlMTUOC2 = "http://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/translate"
+        except:
+            errormessage="Error connecting to MTUOC2: \n"+ str(sys.exc_info()[1])
+            messagebox.showinfo("Error", errormessage) 
+            
+            
     elif server_type=="Moses":
         try:
             global proxyMoses
-            proxyMoses = xmlrpc.client.ServerProxy("http://"+connecto_E_Server.get()+":"+str(connecto_E_Port.get())+"/RPC2")
+            proxyMoses = xmlrpc.client.ServerProxy("http://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/RPC2")
         except:
             errormessage="Error connecting to Moses: \n"+ str(sys.exc_info()[1])
             messagebox.showinfo("Error", errormessage)      
@@ -86,21 +95,21 @@ def connect():
     elif server_type=="OpenNMT":
         try:
             global urlOpenNMT
-            urlOpenNMT = "http://"+connecto_E_Server.get()+":"+str(connecto_E_Port.get())+"/translator/translate"
+            urlOpenNMT = "http://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/translator/translate"
         except:
             errormessage="Error connecting to OpenNMT: \n"+ str(sys.exc_info()[1])
             messagebox.showinfo("Error", errormessage)   
     elif server_type=="NMTWizard":
         try:
             global urlNMTWizard
-            urlNMTWizard = "http://"+connecto_E_Server.get()+":"+str(connecto_E_Port.get())+"/translate"
+            urlNMTWizard = "http://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/translate"
         except:
             errormessage="Error connecting to NMTWizard: \n"+ str(sys.exc_info()[1])
             messagebox.showinfo("Error", errormessage)           
     elif server_type=="ModernMT":
         try:
             global urlModernMT
-            urlModernMT = "http://"+connecto_E_Server.get()+":"+str(connecto_E_Port.get())+"/translate"
+            urlModernMT = "http://"+connecto_E_Server.get().strip()+":"+str(connecto_E_Port.get())+"/translate"
         except:
             errormessage="Error connecting to ModernMT: \n"+ str(sys.exc_info()[1])
             messagebox.showinfo("Error", errormessage)
@@ -134,6 +143,51 @@ def translate_segment_MTUOC(segment):
         messagebox.showinfo("Error", errormessage)
     return(translation)
 
+
+
+def translate_segment_MTUOC2_noval(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
+    import random
+    global urlMTUOC2
+    translation=""
+    try:
+        headers = {'content-type': 'application/json'}
+        #params = [{ "id" : id},{ "src" : segment},{ "srcLang" : srcLang},{"tgtLang" : tgtLang}]
+        params={}
+        params["id"]=random.randint(0, 10000)
+        params["src"]=segment
+        params["srcLang"]=srcLang
+        params["tgtLang"]=tgtLang
+        response = requests.post(urlMTUOC2, json=params, headers=headers)
+        
+        target = response.json()
+        print("***",target)
+        translation=target[0][0]["tgt"]
+    except:
+        errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])
+        messagebox.showinfo("Error", errormessage)
+    return(translation)
+
+def translate_segment_MTUOC2(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
+    import random
+    global urlMTUOC2
+    translation=""
+    try:
+        headers = {'content-type': 'application/json'}
+        #params = [{ "id" : id},{ "src" : segment},{ "srcLang" : srcLang},{"tgtLang" : tgtLang}]
+        params={}
+        params["id"]=random.randint(0, 10000)
+        params["src"]=segment
+        params["srcLang"]=srcLang
+        params["tgtLang"]=tgtLang
+        response = requests.post(urlMTUOC2, json=params, headers=headers)
+        
+        target = response.json()
+        print("***",target)
+        translation=target["tgt"]
+    except:
+        errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])
+        messagebox.showinfo("Error", errormessage)
+    return(translation)
     
 def translate_segment_OpenNMT(segment):
     global urlOpenNMT
@@ -192,6 +246,8 @@ def translate_segment(segment):
     MTEngine=connecto_ListBox_TypeList.get(ACTIVE)
     if MTEngine=="MTUOC":
         translation=translate_segment_MTUOC(segment)
+    elif MTEngine=="MTUOC2":
+        translation=translate_segment_MTUOC2(segment)
     elif MTEngine=="OpenNMT":
         translation=translate_segment_OpenNMT(segment)
     elif MTEngine=="NMTWizard":
@@ -453,7 +509,7 @@ connecto_L_List = Label(connecto_frame,text="Server type:").grid(sticky="W",row=
 
 connecto_ListBox_TypeList = Listbox(connecto_frame,selectmode=SINGLE)
 connecto_ListBox_TypeList.grid(sticky="W",row=2,column=1)
-listTypes=["MTUOC", "Moses", "OpenNMT", "NMTWizard", "ModernMT"]
+listTypes=["MTUOC", "MTUOC2","Moses", "OpenNMT", "NMTWizard", "ModernMT"]
 for item in listTypes:
     connecto_ListBox_TypeList.insert(END, item)
 connecto_ListBox_TypeList.config(width=0,height=0)

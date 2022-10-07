@@ -144,29 +144,6 @@ def translate_segment_MTUOC(segment):
     return(translation)
 
 
-
-def translate_segment_MTUOC2_noval(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
-    import random
-    global urlMTUOC2
-    translation=""
-    try:
-        headers = {'content-type': 'application/json'}
-        #params = [{ "id" : id},{ "src" : segment},{ "srcLang" : srcLang},{"tgtLang" : tgtLang}]
-        params={}
-        params["id"]=random.randint(0, 10000)
-        params["src"]=segment
-        params["srcLang"]=srcLang
-        params["tgtLang"]=tgtLang
-        response = requests.post(urlMTUOC2, json=params, headers=headers)
-        
-        target = response.json()
-        print("***",target)
-        translation=target[0][0]["tgt"]
-    except:
-        errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])
-        messagebox.showinfo("Error", errormessage)
-    return(translation)
-
 def translate_segment_MTUOC2(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
     import random
     global urlMTUOC2
@@ -182,7 +159,6 @@ def translate_segment_MTUOC2(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
         response = requests.post(urlMTUOC2, json=params, headers=headers)
         
         target = response.json()
-        print("***",target)
         translation=target["tgt"]
     except:
         errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])

@@ -108,11 +108,12 @@ def translate_segment_MTUOC2(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
         params["srcLang"]=srcLang
         params["tgtLang"]=tgtLang
         response = requests.post(urlMTUOC2, json=params, headers=headers)
+        
         target = response.json()
-        translation=target[0][0]["tgt"]
+        translation=target["tgt"]
     except:
         errormessage="Error retrieving translation from MTUOC2: \n"+ str(sys.exc_info()[1])
-        print_info("Error", errormessage)
+        messagebox.showinfo("Error", errormessage)
     return(translation)
 
 def translate_segment_OpenNMT(segment):

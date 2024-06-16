@@ -116,7 +116,7 @@ def translate_segment_MTUOC(segment,id=101,srcLang="en-US",tgtLang="es-ES",):
         translation=target["tgt"]
     except:
         errormessage="Error retrieving translation from MTUOC: \n"+ str(sys.exc_info()[1])
-        messagebox.showinfo("Error", errormessage)
+        print_info("Error", errormessage)
     return(translation)
 
 def translate_segment_OpenNMT(segment):
@@ -130,7 +130,7 @@ def translate_segment_OpenNMT(segment):
         translation=target[0][0]["tgt"]
     except:
         errormessage="Error retrieving translation from OpenNMT: \n"+ str(sys.exc_info()[1])
-        messagebox.showinfo("Error", errormessage)
+        print_info("Error", errormessage)
     return(translation)
 
     
